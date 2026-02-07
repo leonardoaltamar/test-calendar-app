@@ -1,8 +1,36 @@
+<div class="flex flex-col gap-4">
+    <!-- Custom Header -->
+    <div class="flex justify-between items-center py-2 px-1">
+        <!-- Navigation and Month (Left Side) -->
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <button (click)="prev()" class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                    <i class="pi pi-chevron-left text-sm"></i>
+                </button>
+                <button (click)="next()" class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                    <i class="pi pi-chevron-right text-sm"></i>
+                </button>
+            </div>
+            <h1 class="text-xl font-medium text-[#1E293B] capitalize">
+                {{ currentMonthTitle }}
+            </h1>
+        </div>
 
-<div>
-    <div>
-        <p-button label="Crear sección" icon="pi pi-plus" type="button" size="small" (click)="openModal()"/>
+        <!-- Action Button (Right Side) -->
+        <div>
+            <button 
+                (click)="openModal()"
+                class="bg-[#FF3B6B] hover:bg-[#E0345E] text-white px-6 py-2 rounded-full flex items-center gap-2 transition-all shadow-sm font-medium text-sm group"
+            >
+                <i class="pi pi-plus-circle text-lg opacity-80 group-hover:opacity-100"></i>
+                Crear sesión/es
+            </button>
+        </div>
     </div>
-    <full-calendar [options]="calendarOptions"></full-calendar>
+
+    <!-- Calendar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-1">
+        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>
 </div>
 

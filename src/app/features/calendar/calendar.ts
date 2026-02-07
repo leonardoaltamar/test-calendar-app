@@ -1,33 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateSection } from './modals/create-section/create-section';
+import esLocale from '@fullcalendar/core/locales/es';
 
 @Component({
     selector: 'app-calendar',
+    standalone: true,
     imports: [FullCalendarModule, ButtonModule],
     templateUrl: './calendar.html',
     styleUrl: './calendar.css',
     providers: [DialogService]
 })
 export class Calendar {
+    @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
+    
+    currentMonthTitle: string = '';
+
     calendarOptions: CalendarOptions = {
         initialView: 'dayGridMonth',
         plugins: [dayGridPlugin, interactionPlugin],
+        locale: esLocale,
+        headerToolbar: false,
         eventDisplay: 'block',
         dateClick: (arg) => this.handleDateClick(arg),
+        datesSet: (arg) => this.handleDatesSet(arg),
         events: [
             { title: 'event 1', date: '2026-02-02' },
             { title: 'event 2', date: '2026-02-03' }
         ]
     };
 
-    constructor(private dialogService: DialogService) {
-        
+    constructor(
+        private dialogService: DialogService,
+        private cdr: ChangeDetectorRef
+    ) {}
+
+    handleDatesSet(arg: any) {
+        this.currentMonthTitle = arg.view.title;
+        this.cdr.detectChanges();
+    }
+
+    prev() {
+        this.calendarComponent.getApi().prev();
+    }
+
+    next() {
+        this.calendarComponent.getApi().next();
     }
 
 

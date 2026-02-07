@@ -1,0 +1,149 @@
+<div class="p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+  <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+    
+    <!-- Imagen / Banner -->
+    <div class="flex flex-col gap-2">
+      <label class="font-medium text-slate-700">Imagen de la sesión (Opcional)</label>
+      <p-fileupload 
+        mode="basic" 
+        chooseLabel="Seleccionar Imagen" 
+        accept="image/*" 
+        [maxFileSize]="1000000" 
+        (onSelect)="onFileUpload($event)"
+        styleClass="w-full"
+      />
+      <small class="text-slate-500">Banner o cover para la sesión. Máx 1MB.</small>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Título -->
+      <div class="flex flex-col gap-2">
+        <label for="title" class="font-medium text-slate-700">Título</label>
+        <input 
+          pInputText 
+          id="title" 
+          formControlName="title" 
+          placeholder="Ej: Masterclass Angular 21"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('title')?.invalid && sessionForm.get('title')?.touched}"
+        />
+        <small *ngIf="sessionForm.get('title')?.invalid && sessionForm.get('title')?.touched" class="text-red-500">
+          El título es obligatorio.
+        </small>
+      </div>
+
+      <!-- Ciudad -->
+      <div class="flex flex-col gap-2">
+        <label for="city" class="font-medium text-slate-700">Ciudad</label>
+        <input 
+          pInputText 
+          id="city" 
+          formControlName="city" 
+          placeholder="Ej: Bogotá"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('city')?.invalid && sessionForm.get('city')?.touched}"
+        />
+        <small *ngIf="sessionForm.get('city')?.invalid && sessionForm.get('city')?.touched" class="text-red-500">
+          La ciudad es obligatoria.
+        </small>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="flex flex-col gap-2">
+      <label for="description" class="font-medium text-slate-700">Descripción</label>
+      <textarea 
+        pTextarea 
+        id="description" 
+        formControlName="description" 
+        rows="3" 
+        placeholder="Describe brevemente la sesión..."
+        [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('description')?.invalid && sessionForm.get('description')?.touched}"
+      ></textarea>
+      <small *ngIf="sessionForm.get('description')?.invalid && sessionForm.get('description')?.touched" class="text-red-500">
+        La descripción es obligatoria.
+      </small>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Categoría -->
+      <div class="flex flex-col gap-2">
+        <label for="category" class="font-medium text-slate-700">Categoría</label>
+        <p-select 
+          [options]="categories" 
+          formControlName="category" 
+          optionLabel="label" 
+          optionValue="value"
+          [filter]="true" 
+          filterBy="label" 
+          placeholder="Selecciona una categoría"
+          appendTo="body"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('category')?.invalid && sessionForm.get('category')?.touched}"
+        />
+        <small *ngIf="sessionForm.get('category')?.invalid && sessionForm.get('category')?.touched" class="text-red-500">
+          Selecciona una categoría.
+        </small>
+      </div>
+
+    <!-- Fecha y Horas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="date" class="font-medium text-slate-700">Fecha</label>
+        <p-datepicker 
+          id="date" 
+          formControlName="date" 
+          placeholder="Selecciona fecha"
+          appendTo="body"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('date')?.invalid && sessionForm.get('date')?.touched}"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="startTime" class="font-medium text-slate-700">Hora Inicio</label>
+        <p-datepicker 
+          id="startTime" 
+          formControlName="startTime" 
+          [timeOnly]="true" 
+          hourFormat="12"
+          placeholder="Inicio"
+          appendTo="body"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('startTime')?.invalid && sessionForm.get('startTime')?.touched}"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="endTime" class="font-medium text-slate-700">Hora Fin</label>
+        <p-datepicker 
+          id="endTime" 
+          formControlName="endTime" 
+          [timeOnly]="true" 
+          hourFormat="12"
+          placeholder="Fin"
+          appendTo="body"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('endTime')?.invalid && sessionForm.get('endTime')?.touched}"
+        />
+      </div>
+    </div>
+    </div>
+
+    <!-- Estado -->
+    <div class="flex flex-col gap-2">
+      <label class="font-medium text-slate-700">Estado</label>
+      <p-selectbutton 
+        [options]="statusOptions" 
+        formControlName="status" 
+        optionLabel="label" 
+        optionValue="value"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex justify-end gap-3 mt-4">
+      <p-button label="Cancelar" severity="secondary" size="small" (onClick)="cancel()"  variant="outlined" type="button" />
+      <p-button label="Guardar Sesión" type="submit" size="small" [disabled]="sessionForm.invalid" />
+    </div>
+  </form>
+</div>

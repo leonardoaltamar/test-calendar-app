@@ -7,11 +7,14 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateSection } from './modals/create-section/create-section';
 import esLocale from '@fullcalendar/core/locales/es';
-import { Category, Status } from '../../core/models';
+import { Category, Session, Status } from '../../core/models';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { SessionService } from '../../core/services/calendar/session.service';
+import { CategoryService } from '../../core/services/calendar/category.service';
+import { StatusService } from '../../core/services/calendar/status.service';
 
 @Component({
     selector: 'app-calendar',
@@ -23,25 +26,20 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 })
 export class Calendar implements OnInit {
 
-    categories: Category[] = [
-        { id: 1, label: 'Formación' },
-        { id: 2, label: 'Reunión' },
-        { id: 3, label: 'Marketing' },
-        { id: 4, label: 'Demo' }
-    ];
+    private sessionService = inject(SessionService);
+    private categoryService = inject(CategoryService);
+    private statusService = inject(StatusService);
 
-    statusOptions: Status[] = [
-        { label: 'Borrador', id: 1 },
-        { label: 'Bloqueado', id: 2 },
-        { label: 'Oculto', id: 3 }
-    ];
+    categories: Category[] = [];
+
+    statusOptions: Status[] = [];
 
     @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
     categoryControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
     statusControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
 
-    allEvents: any[] = [];
+    allEvents: Session[] = [];
     currentMonthTitle: string = '';
 
     calendarOptions: CalendarOptions = {
@@ -110,10 +108,28 @@ export class Calendar implements OnInit {
     private ngZone = inject(NgZone);
     private dialogService = inject(DialogService);
 
+
     ngOnInit() {
         // Suscribirse a los cambios de los filtros
         this.categoryControllerFilter.valueChanges.subscribe(() => this.applyFilters());
         this.statusControllerFilter.valueChanges.subscribe(() => this.applyFilters());
+
+        this.loadData();
+    }
+
+    loadData() {
+        this.sessionService.getSessions().subscribe((sessions) => {
+            this.allEvents = sessions;
+            this.applyFilters();
+        });
+
+        this.categoryService.getCategories().subscribe((categories) => {
+            this.categories = categories;
+        });
+
+        this.statusService.getStatuses().subscribe((statuses) => {
+            this.statusOptions = statuses;
+        });
     }
 
     applyFilters() {
@@ -125,16 +141,16 @@ export class Calendar implements OnInit {
                 let filtered = [...this.allEvents];
 
                 if (categoryId) {
-                    filtered = filtered.filter(e => e.extendedProps.category === categoryId);
+                    filtered = filtered.filter(e => e.extendedProps?.category === categoryId);
                 }
 
                 if (statusId) {
-                    filtered = filtered.filter(e => e.extendedProps.status === statusId);
+                    filtered = filtered.filter(e => e.extendedProps?.status === statusId);
                 }
 
                 this.calendarOptions = {
                     ...this.calendarOptions,
-                    events: [...filtered] // Forzar nueva referencia
+                    events: [...filtered] as any[] // Asegurar compatibilidad final
                 };
                 this.cdr.detectChanges();
                 this.cdr.markForCheck();
@@ -173,7 +189,7 @@ export class Calendar implements OnInit {
         console.log('date click! ' + arg.dateStr)
     }
 
-    openModal(sessionToEdit?: any) {
+    openModal(sessionToEdit?: Session) {
         const ref: any = this.dialogService.open(CreateSection, {
             header: sessionToEdit ? 'Editar Sesión' : 'Crear Sesión',
             width: '50vw',
@@ -188,12 +204,13 @@ export class Calendar implements OnInit {
         });
 
         ref.onClose.subscribe((session: any) => {
+            console.log(session);
             this.ngZone.run(() => {
                 if (session) {
                     if (session.action === 'delete') {
                         // Eliminar de la lista maestra
                         this.allEvents = this.allEvents.filter(
-                            e => e.id !== sessionToEdit.id
+                            e => e.id !== sessionToEdit?.id
                         );
                         this.applyFilters();
                         return;
@@ -201,16 +218,22 @@ export class Calendar implements OnInit {
 
                     // Combinar fecha y horas en objetos Date adecuados para FullCalendar
                     const startDate = new Date(session.date);
-                    startDate.setHours(session.startTime.getHours(), session.startTime.getMinutes());
+                    startDate.setHours(session.start.getHours(), session.start.getMinutes());
 
                     const endDate = new Date(session.date);
-                    endDate.setHours(session.endTime.getHours(), session.endTime.getMinutes());
+                    endDate.setHours(session.end.getHours(), session.end.getMinutes());
 
-                    const eventData = {
+                    const eventData: Session = {
                         id: sessionToEdit?.id || String(Date.now()),
                         title: session.title,
+                        date: session.date,
                         start: startDate,
                         end: endDate,
+                        description: session.description,
+                        city: session.city,
+                        status: session.status,
+                        category: session.category,
+                        image: session.image,
                         extendedProps: {
                             description: session.description,
                             city: session.city,

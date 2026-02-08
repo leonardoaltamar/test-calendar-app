@@ -100,30 +100,30 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="startTime" class="font-medium text-slate-700">Hora Inicio</label>
+        <label for="start" class="font-medium text-slate-700">Hora Inicio</label>
         <p-datepicker 
-          id="startTime" 
-          formControlName="startTime" 
+          id="start" 
+          formControlName="start" 
           [timeOnly]="true" 
           hourFormat="12"
           placeholder="Inicio"
           appendTo="body"
           class="w-full"
-          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('startTime')?.invalid && sessionForm.get('startTime')?.touched}"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('start')?.invalid && sessionForm.get('start')?.touched}"
         />
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="endTime" class="font-medium text-slate-700">Hora Fin</label>
+        <label for="end" class="font-medium text-slate-700">Hora Fin</label>
         <p-datepicker 
-          id="endTime" 
-          formControlName="endTime" 
+          id="end" 
+          formControlName="end" 
           [timeOnly]="true" 
           hourFormat="12"
           placeholder="Fin"
           appendTo="body"
           class="w-full"
-          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('endTime')?.invalid && sessionForm.get('endTime')?.touched}"
+          [ngClass]="{'ng-invalid ng-dirty': sessionForm.get('end')?.invalid && sessionForm.get('end')?.touched}"
         />
       </div>
     </div>

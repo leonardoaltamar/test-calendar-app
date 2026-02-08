@@ -1,0 +1,64 @@
+{
+    "sessions": [
+        {
+            "id": "1",
+            "image": null,
+            "title": "ejemplo",
+            "description": "desscripcion",
+            "category": 1,
+            "city": "ejemplo",
+            "date": "2026-02-08T02:48:42.000Z",
+            "start": "2026-02-08T02:48:42.000Z",
+            "end": "2026-02-08T03:48:42.000Z",
+            "status": 3
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "label": "Formación"
+        },
+        {
+            "id": 2,
+            "label": "Reunión"
+        },
+        {
+            "id": 3,
+            "label": "Marketing"
+        },
+        {
+            "id": 4,
+            "label": "Demo"
+        }
+    ],
+    "statuses": [
+        {
+            "id": 1,
+            "label": "Borrador"
+        },
+        {
+            "id": 2,
+            "label": "Bloqueado"
+        },
+        {
+            "id": 3,
+            "label": "Oculto"
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "email": "test@gmail.com",
+            "password": "123",
+            "admin": false,
+            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312"
+        },
+        {
+            "id": 2,
+            "email": "admin@sdi.es",
+            "password": "123",
+            "admin": true,
+            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312444234azsdfasdf"
+        }
+    ]
+}

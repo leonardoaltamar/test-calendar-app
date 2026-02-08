@@ -50,8 +50,8 @@ export class CreateSection implements OnInit {
 
     const initialValues = sessionData || {
         date: new Date(),
-        startTime: new Date(),
-        endTime: new Date(new Date().getTime() + 60 * 60 * 1000),
+        start: new Date(),
+        end: new Date(new Date().getTime() + 60 * 60 * 1000),
         status: 'borrador'
     };
 
@@ -62,8 +62,8 @@ export class CreateSection implements OnInit {
       category: [sessionData?.category || null, Validators.required],
       city: [sessionData?.city || '', Validators.required],
       date: [new Date(initialValues.date || initialValues.start), Validators.required],
-      startTime: [new Date(initialValues.startTime || initialValues.start), Validators.required],
-      endTime: [new Date(initialValues.endTime || initialValues.end), Validators.required],
+      start: [new Date(initialValues.start), Validators.required],
+      end: [new Date(initialValues.end), Validators.required],
       status: [initialValues.status, Validators.required]
     });
   }

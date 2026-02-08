@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
     selector: 'app-navbar',
@@ -14,6 +15,7 @@ import { MenuModule } from 'primeng/menu';
 export class Navbar {
     private messageService = inject(MessageService);
     private router = inject(Router);
+    private authService = inject(AuthService);
     items: MenuItem[] | undefined = [
         {
             label: 'Opciones',
@@ -22,6 +24,7 @@ export class Navbar {
                     label: 'Cerrar sesión',
                     icon: 'pi pi-sign-out',
                     command: () => {
+                        this.authService.signOut();
                         this.router.navigate(['/auth/login']);
                     }
                 }

@@ -1,18 +1,5 @@
 {
-    "sessions": [
-        {
-            "id": "1",
-            "image": null,
-            "title": "ejemplo",
-            "description": "desscripcion",
-            "category": 1,
-            "city": "ejemplo",
-            "date": "2026-02-08T02:48:42.000Z",
-            "start": "2026-02-08T02:48:42.000Z",
-            "end": "2026-02-08T03:48:42.000Z",
-            "status": 3
-        }
-    ],
+    "sessions": [],
     "categories": [
         {
             "id": 1,
@@ -51,14 +38,23 @@
             "email": "test@gmail.com",
             "password": "123",
             "admin": false,
-            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312"
+            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312",
+            "permissions": [
+                "read_session"
+            ]
         },
         {
             "id": 2,
             "email": "admin@sdi.es",
             "password": "123",
             "admin": true,
-            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312444234azsdfasdf"
+            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312444234azsdfasdf",
+            "permissions": [
+                "create_session",
+                "read_session",
+                "update_session",
+                "delete_session"
+            ]
         }
     ]
 }

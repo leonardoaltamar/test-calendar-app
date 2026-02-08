@@ -48,12 +48,20 @@ export class CreateSection implements OnInit {
     const sessionData = this.config.data?.session;
     this.isEdit = !!sessionData;
 
+    // Resetear minDate a las 00:00:00 para permitir hoy completo
+    this.minDate.setHours(0, 0, 0, 0);
+
     const initialValues = sessionData || {
         date: new Date(),
         start: new Date(),
         end: new Date(new Date().getTime() + 60 * 60 * 1000),
-        status: 'borrador'
+        status: 1
     };
+
+    // Asegurar que las fechas existan y sean objetos Date válidos
+    const dateValue = new Date(initialValues.date || initialValues.start || new Date());
+    const startValue = new Date(initialValues.start || initialValues.date || new Date());
+    const endValue = new Date(initialValues.end || startValue || new Date());
 
     this.sessionForm = this.fb.group({
       image: [sessionData?.image || null],
@@ -61,9 +69,9 @@ export class CreateSection implements OnInit {
       description: [sessionData?.description || '', Validators.required],
       category: [sessionData?.category || null, Validators.required],
       city: [sessionData?.city || '', Validators.required],
-      date: [new Date(initialValues.date || initialValues.start), Validators.required],
-      start: [new Date(initialValues.start), Validators.required],
-      end: [new Date(initialValues.end), Validators.required],
+      date: [dateValue, Validators.required],
+      start: [startValue, Validators.required],
+      end: [endValue, Validators.required],
       status: [initialValues.status, Validators.required]
     });
   }

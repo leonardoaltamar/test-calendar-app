@@ -141,11 +141,11 @@ export class Calendar implements OnInit {
                 let filtered = [...this.allEvents];
 
                 if (categoryId) {
-                    filtered = filtered.filter(e => e.extendedProps?.category === categoryId);
+                    filtered = filtered.filter(e => e.category === categoryId);
                 }
 
                 if (statusId) {
-                    filtered = filtered.filter(e => e.extendedProps?.status === statusId);
+                    filtered = filtered.filter(e => e.status === statusId);
                 }
 
                 this.calendarOptions = {
@@ -164,15 +164,11 @@ export class Calendar implements OnInit {
     }
 
     handleEventClick(arg: any) {
-        const event = arg.event;
-        const sessionData = {
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            ...event.extendedProps
-        };
-        this.openModal(sessionData);
+        const eventId = arg.event.id;
+        const session = this.allEvents.find(s => s.id === eventId);
+        if (session) {
+            this.openModal(session);
+        }
     }
 
     prev() {
@@ -204,57 +200,43 @@ export class Calendar implements OnInit {
         });
 
         ref.onClose.subscribe((session: any) => {
-            console.log(session);
+            if (!session) return;
+
             this.ngZone.run(() => {
-                if (session) {
-                    if (session.action === 'delete') {
-                        // Eliminar de la lista maestra
-                        this.allEvents = this.allEvents.filter(
-                            e => e.id !== sessionToEdit?.id
-                        );
-                        this.applyFilters();
-                        return;
-                    }
+                if (session.action === 'delete') {
+                    this.sessionService.deleteSession(sessionToEdit!.id).subscribe(() => {
+                        this.loadData();
+                    });
+                    return;
+                }
 
-                    // Combinar fecha y horas en objetos Date adecuados para FullCalendar
-                    const startDate = new Date(session.date);
-                    startDate.setHours(session.start.getHours(), session.start.getMinutes());
+                const startDate = new Date(session.date);
+                startDate.setHours(session.start.getHours(), session.start.getMinutes());
 
-                    const endDate = new Date(session.date);
-                    endDate.setHours(session.end.getHours(), session.end.getMinutes());
+                const endDate = new Date(session.date);
+                endDate.setHours(session.end.getHours(), session.end.getMinutes());
 
-                    const eventData: Session = {
-                        id: sessionToEdit?.id || String(Date.now()),
-                        title: session.title,
-                        date: session.date,
-                        start: startDate,
-                        end: endDate,
-                        description: session.description,
-                        city: session.city,
-                        status: session.status,
-                        category: session.category,
-                        image: session.image,
-                        extendedProps: {
-                            description: session.description,
-                            city: session.city,
-                            status: session.status,
-                            category: session.category,
-                            image: session.image
-                        }
-                    };
+                const sessionData: Session = {
+                    id: sessionToEdit?.id || String(Date.now()),
+                    title: session.title,
+                    date: session.date,
+                    start: startDate,
+                    end: endDate,
+                    description: session.description,
+                    city: session.city,
+                    status: session.status,
+                    category: session.category,
+                    image: session.image
+                };
 
-                    if (sessionToEdit) {
-                        // Actualizar en la lista maestra
-                        const index = this.allEvents.findIndex(e => e.id === sessionToEdit.id);
-                        if (index !== -1) {
-                            this.allEvents[index] = eventData;
-                        }
-                    } else {
-                        // Añadir a la lista maestra
-                        this.allEvents.push(eventData);
-                    }
-
-                    this.applyFilters();
+                if (sessionToEdit) {
+                    this.sessionService.updateSession(sessionToEdit.id, sessionData).subscribe(() => {
+                        this.loadData();
+                    });
+                } else {
+                    this.sessionService.createSession(sessionData).subscribe(() => {
+                        this.loadData();
+                    });
                 }
             });
         });

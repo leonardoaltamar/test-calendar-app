@@ -4,4 +4,5 @@ export interface User {
     password: string;
     admin: boolean;
     token: string;
+    permissions: string[];
 }

@@ -1,5 +1,3 @@
-import { ExtendedProps } from "./ExtendedProps"
-
 export interface Session {
   id: string
   image: any
@@ -11,5 +9,4 @@ export interface Session {
   start: string | Date
   end: string | Date
   status: number
-  extendedProps?: ExtendedProps
 }

@@ -55,7 +55,6 @@ export class Calendar implements OnInit {
         firstDay: 1, // Lunes como primer día
         headerToolbar: false,
         eventDisplay: 'block',
-        dateClick: (arg) => this.handleDateClick(arg),
         datesSet: (arg) => this.handleDatesSet(arg),
         eventClick: (arg) => this.handleEventClick(arg),
         eventContent: (arg) => {
@@ -168,10 +167,6 @@ export class Calendar implements OnInit {
     }
 
 
-    handleDateClick(arg: any) {
-        // En el futuro podríamos abrir el modal directamente aquí con la fecha seleccionada
-        console.log('date click! ' + arg.dateStr)
-    }
 
     openModal(sessionToEdit?: Session) {
         const ref: any = this.dialogService.open(CreateSection, {

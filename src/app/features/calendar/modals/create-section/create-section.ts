@@ -80,7 +80,6 @@ export class CreateSection implements OnInit {
 
   onSubmit() {
     if (this.sessionForm.valid) {
-      console.log('Form Submitted:', this.sessionForm.value);
       this.ref.close(this.sessionForm.value);
     } else {
       Object.values(this.sessionForm.controls).forEach(control => {
@@ -99,7 +98,6 @@ export class CreateSection implements OnInit {
   }
 
   cancel() {
-    console.log('cancel');
     this.ref.close();
   }
 }

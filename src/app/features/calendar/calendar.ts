@@ -1,4 +1,4 @@
-import { Component, ViewChild, ChangeDetectorRef, NgZone, inject } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef, NgZone, inject, OnInit } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -21,7 +21,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     styleUrl: './calendar.css',
     providers: [DialogService]
 })
-export class Calendar {
+export class Calendar implements OnInit {
 
     categories: Category[] = [
         { id: 1, label: 'Formación' },
@@ -41,6 +41,7 @@ export class Calendar {
     categoryControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
     statusControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
 
+    allEvents: any[] = [];
     currentMonthTitle: string = '';
 
     calendarOptions: CalendarOptions = {
@@ -109,6 +110,38 @@ export class Calendar {
     private ngZone = inject(NgZone);
     private dialogService = inject(DialogService);
 
+    ngOnInit() {
+        // Suscribirse a los cambios de los filtros
+        this.categoryControllerFilter.valueChanges.subscribe(() => this.applyFilters());
+        this.statusControllerFilter.valueChanges.subscribe(() => this.applyFilters());
+    }
+
+    applyFilters() {
+        this.ngZone.run(() => {
+            setTimeout(() => {
+                const categoryId = this.categoryControllerFilter.value;
+                const statusId = this.statusControllerFilter.value;
+
+                let filtered = [...this.allEvents];
+
+                if (categoryId) {
+                    filtered = filtered.filter(e => e.extendedProps.category === categoryId);
+                }
+
+                if (statusId) {
+                    filtered = filtered.filter(e => e.extendedProps.status === statusId);
+                }
+
+                this.calendarOptions = {
+                    ...this.calendarOptions,
+                    events: [...filtered] // Forzar nueva referencia
+                };
+                this.cdr.detectChanges();
+                this.cdr.markForCheck();
+            });
+        });
+    }
+
     handleDatesSet(arg: any) {
         this.currentMonthTitle = arg.view.title;
         this.cdr.detectChanges();
@@ -158,15 +191,11 @@ export class Calendar {
             this.ngZone.run(() => {
                 if (session) {
                     if (session.action === 'delete') {
-                        // Eliminar evento
-                        const currentEvents = (this.calendarOptions.events as any[]).filter(
+                        // Eliminar de la lista maestra
+                        this.allEvents = this.allEvents.filter(
                             e => e.id !== sessionToEdit.id
                         );
-                        this.calendarOptions = {
-                            ...this.calendarOptions,
-                            events: currentEvents
-                        };
-                        this.cdr.detectChanges();
+                        this.applyFilters();
                         return;
                     }
 
@@ -191,24 +220,18 @@ export class Calendar {
                         }
                     };
 
-                    const currentEvents = [...(this.calendarOptions.events as any[])];
-
                     if (sessionToEdit) {
-                        // Actualizar evento existente
-                        const index = currentEvents.findIndex(e => e.id === sessionToEdit.id);
+                        // Actualizar en la lista maestra
+                        const index = this.allEvents.findIndex(e => e.id === sessionToEdit.id);
                         if (index !== -1) {
-                            currentEvents[index] = eventData;
+                            this.allEvents[index] = eventData;
                         }
                     } else {
-                        // Añadir nuevo evento
-                        currentEvents.push(eventData);
+                        // Añadir a la lista maestra
+                        this.allEvents.push(eventData);
                     }
 
-                    this.calendarOptions = {
-                        ...this.calendarOptions,
-                        events: currentEvents
-                    };
-                    this.cdr.detectChanges();
+                    this.applyFilters();
                 }
             });
         });

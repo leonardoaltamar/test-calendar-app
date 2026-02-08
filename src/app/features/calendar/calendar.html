@@ -23,7 +23,7 @@
             <div class="flex flex-col gap-2">
                 <p-floatlabel variant="on">
                     <p-select [options]="categories" [formControl]="categoryControllerFilter" optionLabel="label"
-                        optionValue="id" [filter]="true" filterBy="label"
+                        optionValue="id" [filter]="true" filterBy="label" [showClear]="true"
                         appendTo="body" class="w-full" />
                     <label for="category">Filtro por categoría</label>
                 </p-floatlabel>
@@ -32,7 +32,7 @@
             <div class="flex flex-col gap-2">
                 <p-floatlabel variant="on">
                     <p-select [options]="statusOptions" [formControl]="statusControllerFilter" optionLabel="label"
-                        optionValue="id" [filter]="true" filterBy="label" appendTo="body"
+                        optionValue="id" [filter]="true" filterBy="label" appendTo="body" [showClear]="true"
                         class="w-full" />
                     <label for="status">Filtro por estado</label>
                 </p-floatlabel>

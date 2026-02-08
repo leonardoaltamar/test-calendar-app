@@ -4,10 +4,12 @@
         <!-- Navigation and Month (Left Side) -->
         <div class="flex items-center gap-6">
             <div class="flex items-center gap-2">
-                <button (click)="prev()" class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                <button (click)="prev()"
+                    class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
                     <i class="pi pi-chevron-left text-sm"></i>
                 </button>
-                <button (click)="next()" class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                <button (click)="next()"
+                    class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
                     <i class="pi pi-chevron-right text-sm"></i>
                 </button>
             </div>
@@ -16,9 +18,30 @@
             </h1>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 px-20">
+
+            <div class="flex flex-col gap-2">
+                <p-floatlabel variant="on">
+                    <p-select [options]="categories" [formControl]="categoryControllerFilter" optionLabel="label"
+                        optionValue="id" [filter]="true" filterBy="label"
+                        appendTo="body" class="w-full" />
+                    <label for="category">Filtro por categoría</label>
+                </p-floatlabel>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <p-floatlabel variant="on">
+                    <p-select [options]="statusOptions" [formControl]="statusControllerFilter" optionLabel="label"
+                        optionValue="id" [filter]="true" filterBy="label" appendTo="body"
+                        class="w-full" />
+                    <label for="status">Filtro por estado</label>
+                </p-floatlabel>
+            </div>
+        </div>
+
         <!-- Action Button (Right Side) -->
         <div>
-            <p-button label="Crear sesión/es" icon="pi pi-plus-circle" class="w-full" (click)="openModal()"/>
+            <p-button label="Crear sesión/es" icon="pi pi-plus-circle" class="w-full" (click)="openModal()" />
         </div>
     </div>
 
@@ -27,4 +50,3 @@
         <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     </div>
 </div>
-

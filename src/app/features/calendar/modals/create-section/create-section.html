@@ -71,7 +71,7 @@
           [options]="categories" 
           formControlName="category" 
           optionLabel="label" 
-          optionValue="value"
+          optionValue="id"
           [filter]="true" 
           filterBy="label" 
           placeholder="Selecciona una categoría"
@@ -91,6 +91,7 @@
         <p-datepicker 
           id="date" 
           formControlName="date" 
+          [minDate]="minDate"
           placeholder="Selecciona fecha"
           appendTo="body"
           class="w-full"
@@ -135,14 +136,19 @@
         [options]="statusOptions" 
         formControlName="status" 
         optionLabel="label" 
-        optionValue="value"
+        optionValue="id"
         class="w-full"
       />
     </div>
 
     <!-- Acciones -->
     <div class="flex justify-between gap-3 mt-4">
-      <p-button label="Cancelar" severity="primary" size="small" styleClass="w-34"  (onClick)="cancel()"  variant="outlined" type="button" />
+      <div class="flex gap-3">
+        @if (isEdit) {
+          <p-button label="Eliminar" severity="danger" size="small" styleClass="w-34" (onClick)="onDelete()" variant="outlined" type="button" />
+        }
+        <p-button label="Cancelar" severity="primary" size="small" styleClass="w-34"  (onClick)="cancel()"  variant="outlined" type="button" />
+      </div>
       <p-button [label]="isEdit ? 'Actualizar Sesión' : 'Guardar Sesión'" type="submit" size="small" styleClass="w-34"  [disabled]="sessionForm.invalid" />
     </div>
   </form>

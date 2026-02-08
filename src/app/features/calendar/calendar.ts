@@ -7,18 +7,40 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateSection } from './modals/create-section/create-section';
 import esLocale from '@fullcalendar/core/locales/es';
+import { Category, Status } from '../../core/models';
+import { SelectModule } from 'primeng/select';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
     selector: 'app-calendar',
     standalone: true,
-    imports: [FullCalendarModule, ButtonModule],
+    imports: [FullCalendarModule, ButtonModule, SelectModule, CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule],
     templateUrl: './calendar.html',
     styleUrl: './calendar.css',
     providers: [DialogService]
 })
 export class Calendar {
+
+    categories: Category[] = [
+        { id: 1, label: 'Formación' },
+        { id: 2, label: 'Reunión' },
+        { id: 3, label: 'Marketing' },
+        { id: 4, label: 'Demo' }
+    ];
+
+    statusOptions: Status[] = [
+        { label: 'Borrador', id: 1 },
+        { label: 'Bloqueado', id: 2 },
+        { label: 'Oculto', id: 3 }
+    ];
+
     @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
-    
+
+    categoryControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
+    statusControllerFilter: FormControl<number | null> = new FormControl<number | null>(null, []);
+
     currentMonthTitle: string = '';
 
     calendarOptions: CalendarOptions = {
@@ -43,7 +65,7 @@ export class Calendar {
     constructor(
         private dialogService: DialogService,
         private cdr: ChangeDetectorRef
-    ) {}
+    ) { }
 
     handleDatesSet(arg: any) {
         this.currentMonthTitle = arg.view.title;
@@ -77,11 +99,13 @@ export class Calendar {
     }
 
     openModal(sessionToEdit?: any) {
-        const ref:any = this.dialogService.open(CreateSection, {
+        const ref: any = this.dialogService.open(CreateSection, {
             header: sessionToEdit ? 'Editar Sesión' : 'Crear Sesión',
             width: '50vw',
             data: {
-                session: sessionToEdit
+                session: sessionToEdit,
+                categories: this.categories,
+                statusOptions: this.statusOptions
             },
             contentStyle: { overflow: 'auto' },
             baseZIndex: 10000,
@@ -90,6 +114,19 @@ export class Calendar {
 
         ref.onClose.subscribe((session: any) => {
             if (session) {
+                if (session.action === 'delete') {
+                    // Eliminar evento
+                    const currentEvents = (this.calendarOptions.events as any[]).filter(
+                        e => e.id !== sessionToEdit.id
+                    );
+                    this.calendarOptions = {
+                        ...this.calendarOptions,
+                        events: currentEvents
+                    };
+                    this.cdr.detectChanges();
+                    return;
+                }
+
                 // Combinar fecha y horas en objetos Date adecuados para FullCalendar
                 const startDate = new Date(session.date);
                 startDate.setHours(session.startTime.getHours(), session.startTime.getMinutes());
@@ -112,7 +149,7 @@ export class Calendar {
                 };
 
                 const currentEvents = [...(this.calendarOptions.events as any[])];
-                
+
                 if (sessionToEdit) {
                     // Actualizar evento existente
                     const index = currentEvents.findIndex(e => e.id === sessionToEdit.id);

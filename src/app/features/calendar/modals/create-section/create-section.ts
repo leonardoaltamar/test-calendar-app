@@ -9,6 +9,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { Category, Status } from '../../../../core/models';
 
 @Component({
   selector: 'app-create-section',
@@ -30,25 +31,18 @@ import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 export class CreateSection implements OnInit {
   sessionForm!: FormGroup;
   isEdit: boolean = false;
-
-  categories = [
-    { id: 1, label: 'Formación', value: 1 },
-    { id: 2, label: 'Reunión', value: 2 },
-    { id: 3, label: 'Marketing', value: 3 },
-    { id: 4, label: 'Demo', value: 4 }
-  ];
-
-  statusOptions = [
-    { label: 'Borrador', value: 'borrador' },
-    { label: 'Bloqueado', value: 'bloqueado' },
-    { label: 'Oculto', value: 'oculto' }
-  ];
+  minDate: Date = new Date();
+  categories: Category[] = [];
+  statusOptions: Status[] = [];
 
   constructor(
     private fb: FormBuilder, 
     private ref: DynamicDialogRef,
     private config: DynamicDialogConfig
-  ) {}
+  ) {
+    this.categories = this.config.data?.categories || [];
+    this.statusOptions = this.config.data?.statusOptions || [];
+  }
 
   ngOnInit() {
     const sessionData = this.config.data?.session;
@@ -88,6 +82,10 @@ export class CreateSection implements OnInit {
   onFileUpload(event: any) {
     const file = event.files[0];
     this.sessionForm.patchValue({ image: file });
+  }
+
+  onDelete() {
+    this.ref.close({ action: 'delete' });
   }
 
   cancel() {

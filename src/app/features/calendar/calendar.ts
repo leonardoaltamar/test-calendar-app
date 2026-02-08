@@ -25,14 +25,19 @@ export class Calendar {
         initialView: 'dayGridMonth',
         plugins: [dayGridPlugin, interactionPlugin],
         locale: esLocale,
+        firstDay: 1, // Lunes como primer día
         headerToolbar: false,
         eventDisplay: 'block',
         dateClick: (arg) => this.handleDateClick(arg),
         datesSet: (arg) => this.handleDatesSet(arg),
-        events: [
-            { title: 'event 1', date: '2026-02-02' },
-            { title: 'event 2', date: '2026-02-03' }
-        ]
+        eventClick: (arg) => this.handleEventClick(arg),
+        dayCellContent: (arg) => {
+            const dayNumber = arg.dayNumberText;
+            const month = arg.date.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '');
+            const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+            return { html: `<div class="flex items-center gap-1"><span>${dayNumber}</span><span class="text-[10px] opacity-60 font-normal">${capitalizedMonth}</span></div>` };
+        },
+        events: []
     };
 
     constructor(
@@ -45,6 +50,18 @@ export class Calendar {
         this.cdr.detectChanges();
     }
 
+    handleEventClick(arg: any) {
+        const event = arg.event;
+        const sessionData = {
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            ...event.extendedProps
+        };
+        this.openModal(sessionData);
+    }
+
     prev() {
         this.calendarComponent.getApi().prev();
     }
@@ -55,13 +72,17 @@ export class Calendar {
 
 
     handleDateClick(arg: any) {
-        alert('date click! ' + arg.dateStr)
+        // En el futuro podríamos abrir el modal directamente aquí con la fecha seleccionada
+        console.log('date click! ' + arg.dateStr)
     }
 
-    openModal() {
+    openModal(sessionToEdit?: any) {
         const ref:any = this.dialogService.open(CreateSection, {
-            header: 'Crear Sección',
+            header: sessionToEdit ? 'Editar Sesión' : 'Crear Sesión',
             width: '50vw',
+            data: {
+                session: sessionToEdit
+            },
             contentStyle: { overflow: 'auto' },
             baseZIndex: 10000,
             maximizable: true
@@ -76,22 +97,38 @@ export class Calendar {
                 const endDate = new Date(session.date);
                 endDate.setHours(session.endTime.getHours(), session.endTime.getMinutes());
 
-                const newEvent = {
+                const eventData = {
+                    id: sessionToEdit?.id || String(Date.now()),
                     title: session.title,
                     start: startDate,
                     end: endDate,
                     extendedProps: {
                         description: session.description,
                         city: session.city,
-                        status: session.status
+                        status: session.status,
+                        category: session.category,
+                        image: session.image
                     }
                 };
 
-                // Actualizar eventos usando propagación para disparar la detección de cambios en FullCalendar
+                const currentEvents = [...(this.calendarOptions.events as any[])];
+                
+                if (sessionToEdit) {
+                    // Actualizar evento existente
+                    const index = currentEvents.findIndex(e => e.id === sessionToEdit.id);
+                    if (index !== -1) {
+                        currentEvents[index] = eventData;
+                    }
+                } else {
+                    // Añadir nuevo evento
+                    currentEvents.push(eventData);
+                }
+
                 this.calendarOptions = {
                     ...this.calendarOptions,
-                    events: [...(this.calendarOptions.events as any[]), newEvent]
+                    events: currentEvents
                 };
+                this.cdr.detectChanges();
             }
         });
     }

@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ButtonModule } from 'primeng/button';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-create-section',
@@ -29,6 +29,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 })
 export class CreateSection implements OnInit {
   sessionForm!: FormGroup;
+  isEdit: boolean = false;
 
   categories = [
     { id: 1, label: 'Formación', value: 1 },
@@ -43,22 +44,33 @@ export class CreateSection implements OnInit {
     { label: 'Oculto', value: 'oculto' }
   ];
 
-  constructor(private fb: FormBuilder, private ref: DynamicDialogRef) {}
+  constructor(
+    private fb: FormBuilder, 
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig
+  ) {}
 
   ngOnInit() {
-    const now = new Date();
-    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const sessionData = this.config.data?.session;
+    this.isEdit = !!sessionData;
+
+    const initialValues = sessionData || {
+        date: new Date(),
+        startTime: new Date(),
+        endTime: new Date(new Date().getTime() + 60 * 60 * 1000),
+        status: 'borrador'
+    };
 
     this.sessionForm = this.fb.group({
-      image: [null],
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      category: [null, Validators.required],
-      city: ['', Validators.required],
-      date: [now, Validators.required],
-      startTime: [now, Validators.required],
-      endTime: [oneHourLater, Validators.required],
-      status: ['borrador', Validators.required]
+      image: [sessionData?.image || null],
+      title: [sessionData?.title || '', Validators.required],
+      description: [sessionData?.description || '', Validators.required],
+      category: [sessionData?.category || null, Validators.required],
+      city: [sessionData?.city || '', Validators.required],
+      date: [new Date(initialValues.date || initialValues.start), Validators.required],
+      startTime: [new Date(initialValues.startTime || initialValues.start), Validators.required],
+      endTime: [new Date(initialValues.endTime || initialValues.end), Validators.required],
+      status: [initialValues.status, Validators.required]
     });
   }
 

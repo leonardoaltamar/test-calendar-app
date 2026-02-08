@@ -1,0 +1,47 @@
+/* Quitar el fondo amarillo por defecto de hoy */
+:host ::ng-deep .fc .fc-day-today {
+    background-color: transparent !important;
+}
+
+/* Estilo para el número de día de "hoy" (píldora rosa) */
+:host ::ng-deep .fc .fc-day-today .fc-daygrid-day-number {
+    background-color: #E0345E; /* Tu color principal */
+    color: white !important;
+    border-radius: 9999px;
+    padding: 0.2rem 0.8rem;
+    min-width: 3.5rem;
+    text-align: center;
+    margin: 4px;
+    font-weight: 500;
+}
+
+/* Asegurar que el mes en "hoy" también sea blanco */
+:host ::ng-deep .fc .fc-day-today .fc-daygrid-day-number span {
+    color: white !important;
+}
+
+/* Quitar decoración por defecto de los números */
+:host ::ng-deep .fc .fc-daygrid-day-number {
+    text-decoration: none !important;
+    color: #475569;
+}
+
+/* Ajustar el contenedor para que la píldora se vea bien */
+:host ::ng-deep .fc .fc-daygrid-day-top {
+    flex-direction: row !important;
+    justify-content: flex-end;
+}
+
+/* Estilo para los nombres de los días en el encabezado */
+:host ::ng-deep .fc .fc-col-header-cell-cushion {
+    color: #475569;
+    font-weight: 600;
+    text-decoration: none !important;
+    padding: 10px 0;
+    font-size: 0.875rem;
+}
+
+:host ::ng-deep .fc-theme-standard td, 
+:host ::ng-deep .fc-theme-standard th {
+    border: 1px solid #f1f5f9 !important;
+}

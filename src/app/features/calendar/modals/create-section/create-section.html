@@ -141,9 +141,9 @@
     </div>
 
     <!-- Acciones -->
-    <div class="flex justify-end gap-3 mt-4">
-      <p-button label="Cancelar" severity="secondary" size="small" (onClick)="cancel()"  variant="outlined" type="button" />
-      <p-button label="Guardar Sesión" type="submit" size="small" [disabled]="sessionForm.invalid" />
+    <div class="flex justify-between gap-3 mt-4">
+      <p-button label="Cancelar" severity="primary" size="small" styleClass="w-34"  (onClick)="cancel()"  variant="outlined" type="button" />
+      <p-button [label]="isEdit ? 'Actualizar Sesión' : 'Guardar Sesión'" type="submit" size="small" styleClass="w-34"  [disabled]="sessionForm.invalid" />
     </div>
   </form>
 </div>

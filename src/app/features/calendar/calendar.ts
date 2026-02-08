@@ -17,14 +17,16 @@ import { CategoryService } from '../../core/services/calendar/category.service';
 import { StatusService } from '../../core/services/calendar/status.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { sessionByState } from '../../shared/components/session-state/sessionState';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-calendar',
     standalone: true,
-    imports: [FullCalendarModule, ButtonModule, SelectModule, CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule],
+    imports: [FullCalendarModule, ButtonModule, SelectModule, CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule, ToastModule],
     templateUrl: './calendar.html',
     styleUrl: './calendar.css',
-    providers: [DialogService]
+    providers: [DialogService, MessageService]
 })
 export class Calendar implements OnInit {
 
@@ -32,6 +34,7 @@ export class Calendar implements OnInit {
     private categoryService = inject(CategoryService);
     private statusService = inject(StatusService);
     private authService = inject(AuthService);
+    private messageService = inject(MessageService);
 
     categories: Category[] = [];
 
@@ -218,10 +221,12 @@ export class Calendar implements OnInit {
                 if (sessionToEdit) {
                     this.sessionService.updateSession(sessionToEdit.id, sessionData).subscribe(() => {
                         this.loadData();
+                        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Sesión actualizada correctamente' });
                     });
                 } else {
                     this.sessionService.createSession(sessionData).subscribe(() => {
                         this.loadData();
+                        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Sesión creada correctamente' });
                     });
                 }
             });

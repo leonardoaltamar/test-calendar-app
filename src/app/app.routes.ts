@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { Calendar } from './features/calendar/calendar';
 import { MainLayout } from './shared/layout/main-layout/main-layout';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -10,6 +10,7 @@ export const routes: Routes = [
     {
         path: 'calendar',
         component: MainLayout,
+        canActivate: [authGuard],
         children: [
             {
                 path: '',

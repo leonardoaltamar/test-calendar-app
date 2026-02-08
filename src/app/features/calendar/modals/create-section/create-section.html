@@ -144,7 +144,7 @@
     <!-- Acciones -->
     <div class="flex justify-between gap-3 mt-4">
       <div class="flex gap-3">
-        @if (isEdit) {
+        @if (isEdit && deletePermission) {
           <p-button label="Eliminar" severity="danger" size="small" styleClass="w-34" (onClick)="onDelete()" variant="outlined" type="button" />
         }
         <p-button label="Cancelar" severity="primary" size="small" styleClass="w-34"  (onClick)="cancel()"  variant="outlined" type="button" />

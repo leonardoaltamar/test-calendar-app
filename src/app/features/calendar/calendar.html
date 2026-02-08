@@ -1,52 +1,61 @@
-<div class="flex flex-col gap-4">
-    <!-- Custom Header -->
-    <div class="flex justify-between items-center py-2 px-1">
-        <!-- Navigation and Month (Left Side) -->
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-2">
-                <button (click)="prev()"
-                    class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
-                    <i class="pi pi-chevron-left text-sm"></i>
-                </button>
-                <button (click)="next()"
-                    class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
-                    <i class="pi pi-chevron-right text-sm"></i>
-                </button>
+
+@if (hasPermissionInCalendar('read_session')) {
+    <div class="flex flex-col gap-4">
+        <!-- Custom Header -->
+        <div class="flex justify-between items-center py-2 px-1">
+            <!-- Navigation and Month (Left Side) -->
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <button (click)="prev()"
+                        class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                        <i class="pi pi-chevron-left text-sm"></i>
+                    </button>
+                    <button (click)="next()"
+                        class="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-slate-600">
+                        <i class="pi pi-chevron-right text-sm"></i>
+                    </button>
+                </div>
+                <h1 class="text-xl font-medium text-[#1E293B] capitalize">
+                    {{ currentMonthTitle }}
+                </h1>
             </div>
-            <h1 class="text-xl font-medium text-[#1E293B] capitalize">
-                {{ currentMonthTitle }}
-            </h1>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 px-20">
+    
+                <div class="flex flex-col gap-2">
+                    <p-floatlabel variant="on">
+                        <p-select [options]="categories" [formControl]="categoryControllerFilter" optionLabel="label"
+                            optionValue="id" [filter]="true" filterBy="label" [showClear]="true"
+                            appendTo="body" class="w-full" />
+                        <label for="category">Filtro por categoría</label>
+                    </p-floatlabel>
+                </div>
+    
+                <div class="flex flex-col gap-2">
+                    <p-floatlabel variant="on">
+                        <p-select [options]="statusOptions" [formControl]="statusControllerFilter" optionLabel="label"
+                            optionValue="id" [filter]="true" filterBy="label" appendTo="body" [showClear]="true"
+                            class="w-full" />
+                        <label for="status">Filtro por estado</label>
+                    </p-floatlabel>
+                </div>
+            </div>
+    
+            <!-- Action Button (Right Side) -->
+            @if (hasPermissionInCalendar('create_session')) {
+                <div>
+                    <p-button label="Crear sesión/es" icon="pi pi-plus-circle" class="w-full" (click)="openModal()" />
+                </div>
+            }
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 px-20">
-
-            <div class="flex flex-col gap-2">
-                <p-floatlabel variant="on">
-                    <p-select [options]="categories" [formControl]="categoryControllerFilter" optionLabel="label"
-                        optionValue="id" [filter]="true" filterBy="label" [showClear]="true"
-                        appendTo="body" class="w-full" />
-                    <label for="category">Filtro por categoría</label>
-                </p-floatlabel>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <p-floatlabel variant="on">
-                    <p-select [options]="statusOptions" [formControl]="statusControllerFilter" optionLabel="label"
-                        optionValue="id" [filter]="true" filterBy="label" appendTo="body" [showClear]="true"
-                        class="w-full" />
-                    <label for="status">Filtro por estado</label>
-                </p-floatlabel>
-            </div>
-        </div>
-
-        <!-- Action Button (Right Side) -->
-        <div>
-            <p-button label="Crear sesión/es" icon="pi pi-plus-circle" class="w-full" (click)="openModal()" />
+    
+        <!-- Calendar -->
+        <div class="bg-white shadow-sm border border-gray-100 p-5">
+            <full-calendar #calendar [options]="calendarOptions"></full-calendar>
         </div>
     </div>
-
-    <!-- Calendar -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-1">
-        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+}@else {
+    <div class="flex flex-col gap-4">
+        <h1>No tienes permiso para ver este contenido</h1>
     </div>
-</div>
+}

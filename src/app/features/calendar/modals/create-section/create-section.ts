@@ -34,6 +34,7 @@ export class CreateSection implements OnInit {
   minDate: Date = new Date();
   categories: Category[] = [];
   statusOptions: Status[] = [];
+  deletePermission: boolean = true;
 
   constructor(
     private fb: FormBuilder, 
@@ -46,6 +47,7 @@ export class CreateSection implements OnInit {
 
   ngOnInit() {
     const sessionData = this.config.data?.session;
+    this.deletePermission = this.config.data?.deletePermission;
     this.isEdit = !!sessionData;
 
     // Resetear minDate a las 00:00:00 para permitir hoy completo

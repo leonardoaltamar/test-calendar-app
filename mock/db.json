@@ -1,60 +1,75 @@
 {
-    "sessions": [],
-    "categories": [
-        {
-            "id": 1,
-            "label": "Formación"
-        },
-        {
-            "id": 2,
-            "label": "Reunión"
-        },
-        {
-            "id": 3,
-            "label": "Marketing"
-        },
-        {
-            "id": 4,
-            "label": "Demo"
-        }
-    ],
-    "statuses": [
-        {
-            "id": 1,
-            "label": "Borrador"
-        },
-        {
-            "id": 2,
-            "label": "Bloqueado"
-        },
-        {
-            "id": 3,
-            "label": "Oculto"
-        }
-    ],
-    "users": [
-        {
-            "id": 1,
-            "email": "test@gmail.com",
-            "password": "123",
-            "admin": false,
-            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312",
-            "permissions": [
-                "read_session"
-            ]
-        },
-        {
-            "id": 2,
-            "email": "admin@sdi.es",
-            "password": "123",
-            "admin": true,
-            "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312444234azsdfasdf",
-            "permissions": [
-                "create_session",
-                "read_session",
-                "update_session",
-                "delete_session"
-            ]
-        }
-    ]
+  "sessions": [
+    {
+      "id": "1770522350853",
+      "title": "prueba",
+      "date": "2026-02-08T03:45:38.816Z",
+      "start": "2026-02-08T03:45:38.816Z",
+      "end": "2026-02-08T04:45:38.816Z",
+      "description": "prueba",
+      "city": "bogotá",
+      "status": 1,
+      "category": 1,
+      "image": null
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "label": "Formación"
+    },
+    {
+      "id": 2,
+      "label": "Reunión"
+    },
+    {
+      "id": 3,
+      "label": "Marketing"
+    },
+    {
+      "id": 4,
+      "label": "Demo"
+    }
+  ],
+  "statuses": [
+    {
+      "id": 1,
+      "label": "Borrador"
+    },
+    {
+      "id": 2,
+      "label": "Bloqueado"
+    },
+    {
+      "id": 3,
+      "label": "Oculto"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "test@gmail.com",
+      "password": "123",
+      "admin": false,
+      "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312",
+      "permissions": [
+        "create_session",
+        "read_session",
+        "update_session"
+      ]
+    },
+    {
+      "id": 2,
+      "email": "admin@sdi.es",
+      "password": "123",
+      "admin": true,
+      "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312444234azsdfasdf",
+      "permissions": [
+        "create_session",
+        "read_session",
+        "update_session",
+        "delete_session"
+      ]
+    }
+  ]
 }

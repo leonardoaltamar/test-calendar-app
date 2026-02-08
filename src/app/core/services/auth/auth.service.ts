@@ -44,4 +44,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  hasPermission(permission: string): boolean {
+    const user = this.getUser();
+    return user.permissions?.includes(permission) || false;
+  }
 }

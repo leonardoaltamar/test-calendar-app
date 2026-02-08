@@ -15,6 +15,8 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { SessionService } from '../../core/services/calendar/session.service';
 import { CategoryService } from '../../core/services/calendar/category.service';
 import { StatusService } from '../../core/services/calendar/status.service';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { sessionByState } from '../../shared/components/session-state/sessionState';
 
 @Component({
     selector: 'app-calendar',
@@ -29,6 +31,7 @@ export class Calendar implements OnInit {
     private sessionService = inject(SessionService);
     private categoryService = inject(CategoryService);
     private statusService = inject(StatusService);
+    private authService = inject(AuthService);
 
     categories: Category[] = [];
 
@@ -59,40 +62,19 @@ export class Calendar implements OnInit {
 
             if (status === 2) { // Bloqueado
                 return {
-                    html: `
-                        <div class="flex items-center justify-between w-full p-1 rounded-sm border-l-4 border-red-700 bg-red-100 text-red-900 group">
-                            <div class="flex flex-col overflow-hidden">
-                                <span class="text-[10px] font-bold opacity-75">${startTime}</span>
-                                <span class="text-xs font-medium truncate">${title}</span>
-                            </div>
-                            <i class="pi pi-ban text-xs text-red-700 mr-1"></i>
-                        </div>
-                    `
+                    html: sessionByState(status, startTime, title)
                 };
             }
 
             if (status === 3) { // Oculto
                 return {
-                    html: `
-                        <div class="flex items-center justify-between w-full p-1 rounded-sm border-l-4 border-[#303030] bg-[#999999] text-white group">
-                            <div class="flex flex-col overflow-hidden">
-                                <span class="text-[10px] font-bold opacity-75">${startTime}</span>
-                                <span class="text-xs font-medium truncate">${title}</span>
-                            </div>
-                            <i class="pi pi-eye-slash text-xs text-[#303030] mr-1"></i>
-                        </div>
-                    `
+                    html:  sessionByState(status, startTime, title)
                 };
             }
 
             // Default rendering for other statuses
             return {
-                html: `
-                    <div class="flex flex-col p-1 w-full overflow-hidden bg-pink-50/50 border-l-4 border-[#E0345E] rounded-sm">
-                        <span class="text-[10px] font-bold text-[#E0345E]">${startTime}</span>
-                        <span class="text-xs font-medium truncate text-slate-800">${title}</span>
-                    </div>
-                `
+                html: sessionByState(status, startTime, title)
             };
         },
         dayCellContent: (arg) => {
@@ -164,6 +146,9 @@ export class Calendar implements OnInit {
     }
 
     handleEventClick(arg: any) {
+        if (!this.hasPermissionInCalendar('update_session')) {
+            return;
+        }
         const eventId = arg.event.id;
         const session = this.allEvents.find(s => s.id === eventId);
         if (session) {
@@ -192,7 +177,8 @@ export class Calendar implements OnInit {
             data: {
                 session: sessionToEdit,
                 categories: this.categories,
-                statusOptions: this.statusOptions
+                statusOptions: this.statusOptions,
+                deletePermission: this.hasPermissionInCalendar('delete_session'),
             },
             contentStyle: { overflow: 'auto' },
             baseZIndex: 10000,
@@ -240,5 +226,9 @@ export class Calendar implements OnInit {
                 }
             });
         });
+    }
+
+    hasPermissionInCalendar(permission: string): boolean {
+        return this.authService.hasPermission(permission);
     }
 }

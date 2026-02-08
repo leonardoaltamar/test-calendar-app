@@ -1,59 +1,71 @@
-# TestCalendarApp
+# 📅 TestCalendarApp - Prueba Técnica
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Este proyecto es una aplicación de gestión de sesiones de formación basada en un calendario interactivo. Ha sido desarrollada utilizando **Angular 21**, **PrimeNG** y **FullCalendar**, siguiendo las mejores prácticas de arquitectura modular y seguridad.
 
-## Development server
+## 🚀 Cómo empezar
 
-To start a local development server, run:
+Para ejecutar este proyecto localmente, sigue estos pasos:
 
-```bash
-ng serve
-```
+### 1. Requisitos previos
+- **Node.js**: Versión 18 o superior.
+- **npm**: Instalado junto con Node.js.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 2. Instalación de dependencias
+Clona el repositorio y ejecuta:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 3. Ejecutar el Backend (Mock API)
+La aplicación utiliza un backend simulado con `json-server`. Debes tenerlo corriendo en segundo plano:
 
 ```bash
-ng generate --help
+npm run mock:api
 ```
+*Esto iniciará el servidor en [http://localhost:3000](http://localhost:3000).*
 
-## Building
-
-To build the project run:
+### 4. Ejecutar el Frontend (Angular)
+En otra terminal, corre el servidor de desarrollo de Angular:
 
 ```bash
-ng build
+npm start
 ```
+*Navega a [http://localhost:4200](http://localhost:4200). El login redirigirá automáticamente gracias al AuthGuard.*
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## 🏗️ Arquitectura del Proyecto
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+El código está organizado siguiendo un patrón modular y escalable:
 
-```bash
-ng test
-```
+- **`src/app/core/`**: Lógica global, servicios singleton (Auth, Sessions), modelos de datos compartidos y guardianes de ruta (`AuthGuard`).
+- **`src/app/features/`**: Módulos funcionales de la aplicación (`auth`, `calendar`). Cada uno con su propia lógica y componentes.
+- **`src/app/shared/`**: Componentes reutilizables (Navbar, Layouts), utilidades y constantes globales.
 
-## Running end-to-end tests
+## ✨ Características Principales
 
-For end-to-end (e2e) testing, run:
+### 🔐 Seguridad y Permisos
+- **AuthGuard**: Protege las rutas privadas. No se puede acceder al calendario sin una sesión activa.
+- **RBAC (Role Based Access Control)**: Sistema de permisos granulares por usuario (`create_session`, `read_session`, `update_session`, `delete_session`).
+- **UI Reactiva**: Los botones y acciones (crear, editar, borrar) se ocultan o deshabilitan automáticamente según los permisos del usuario logueado.
 
-```bash
-ng e2e
-```
+### 📅 Gestión de Calendario
+- **CRUD Completo**: Creación, edición y eliminación de sesiones persistente en el backend.
+- **Filtros Avanzados**: Filtrado en tiempo real por categoría y estado de sesión.
+- **Interfaz Premium**: Integración de la tipografía **Satoshi** y componentes de **PrimeNG v21** para una experiencia de usuario moderna.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 👤 Credenciales de prueba
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Puedes probar los diferentes niveles de permisos con estos usuarios:
+
+| Perfil | Email | Password | Permisos |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@sdi.es` | `123` | Todos (CRUD Total) |
+| **Test** | `test@gmail.com` | `123` | Lectura, Creación y Edición |
+
+---
+
+*Desarrollado como prueba técnica de alto nivel.*

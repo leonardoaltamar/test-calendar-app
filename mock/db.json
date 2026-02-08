@@ -71,6 +71,14 @@
       ]
     },
     {
+      "id": 3,
+      "email": "testno@gmail.com",
+      "password": "123",
+      "admin": false,
+      "token": "asdlkfhjasdjfasdfkjlasdfjklasajklsdhf3l123asdf#423412312312",
+      "permissions": []
+    },
+    {
       "id": 2,
       "email": "admin@sdi.es",
       "password": "123",

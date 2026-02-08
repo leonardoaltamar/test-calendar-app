@@ -19,11 +19,12 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { sessionByState } from '../../shared/components/session-state/sessionState';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Empty } from "../../shared/components/empty/empty";
 
 @Component({
     selector: 'app-calendar',
     standalone: true,
-    imports: [FullCalendarModule, ButtonModule, SelectModule, CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule, ToastModule],
+    imports: [FullCalendarModule, ButtonModule, SelectModule, CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule, ToastModule, Empty],
     templateUrl: './calendar.html',
     styleUrl: './calendar.css',
     providers: [DialogService, MessageService]

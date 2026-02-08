@@ -45,3 +45,26 @@
 :host ::ng-deep .fc-theme-standard th {
     border: 1px solid #f1f5f9 !important;
 }
+
+/* Limpiar estilos por defecto de los eventos de FullCalendar */
+:host ::ng-deep .fc-daygrid-event {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 1px 2px !important;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep .fc-v-event {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+:host ::ng-deep .fc-event-main {
+    padding: 0 !important;
+}
+
+/* Asegurar que el contenido del evento ocupe todo el ancho */
+:host ::ng-deep .fc-event-main-frame {
+    width: 100%;
+}

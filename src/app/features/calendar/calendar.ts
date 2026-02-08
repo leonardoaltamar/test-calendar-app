@@ -1,4 +1,4 @@
-import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -53,6 +53,49 @@ export class Calendar {
         dateClick: (arg) => this.handleDateClick(arg),
         datesSet: (arg) => this.handleDatesSet(arg),
         eventClick: (arg) => this.handleEventClick(arg),
+        eventContent: (arg) => {
+            const status = arg.event.extendedProps['status'];
+            const title = arg.event.title;
+            const startTime = arg.event.start?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+            if (status === 2) { // Bloqueado
+                return {
+                    html: `
+                        <div class="flex items-center justify-between w-full p-1 rounded-sm border-l-4 border-red-700 bg-red-100 text-red-900 group">
+                            <div class="flex flex-col overflow-hidden">
+                                <span class="text-[10px] font-bold opacity-75">${startTime}</span>
+                                <span class="text-xs font-medium truncate">${title}</span>
+                            </div>
+                            <i class="pi pi-ban text-xs text-red-700 mr-1"></i>
+                        </div>
+                    `
+                };
+            }
+
+            if (status === 3) { // Oculto
+                return {
+                    html: `
+                        <div class="flex items-center justify-between w-full p-1 rounded-sm border-l-4 border-[#303030] bg-[#999999] text-white group">
+                            <div class="flex flex-col overflow-hidden">
+                                <span class="text-[10px] font-bold opacity-75">${startTime}</span>
+                                <span class="text-xs font-medium truncate">${title}</span>
+                            </div>
+                            <i class="pi pi-eye-slash text-xs text-[#303030] mr-1"></i>
+                        </div>
+                    `
+                };
+            }
+
+            // Default rendering for other statuses
+            return {
+                html: `
+                    <div class="flex flex-col p-1 w-full overflow-hidden bg-pink-50/50 border-l-4 border-[#E0345E] rounded-sm">
+                        <span class="text-[10px] font-bold text-[#E0345E]">${startTime}</span>
+                        <span class="text-xs font-medium truncate text-slate-800">${title}</span>
+                    </div>
+                `
+            };
+        },
         dayCellContent: (arg) => {
             const dayNumber = arg.dayNumberText;
             const month = arg.date.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '');
@@ -62,10 +105,9 @@ export class Calendar {
         events: []
     };
 
-    constructor(
-        private dialogService: DialogService,
-        private cdr: ChangeDetectorRef
-    ) { }
+    private cdr = inject(ChangeDetectorRef);
+    private ngZone = inject(NgZone);
+    private dialogService = inject(DialogService);
 
     handleDatesSet(arg: any) {
         this.currentMonthTitle = arg.view.title;
@@ -113,60 +155,62 @@ export class Calendar {
         });
 
         ref.onClose.subscribe((session: any) => {
-            if (session) {
-                if (session.action === 'delete') {
-                    // Eliminar evento
-                    const currentEvents = (this.calendarOptions.events as any[]).filter(
-                        e => e.id !== sessionToEdit.id
-                    );
+            this.ngZone.run(() => {
+                if (session) {
+                    if (session.action === 'delete') {
+                        // Eliminar evento
+                        const currentEvents = (this.calendarOptions.events as any[]).filter(
+                            e => e.id !== sessionToEdit.id
+                        );
+                        this.calendarOptions = {
+                            ...this.calendarOptions,
+                            events: currentEvents
+                        };
+                        this.cdr.detectChanges();
+                        return;
+                    }
+
+                    // Combinar fecha y horas en objetos Date adecuados para FullCalendar
+                    const startDate = new Date(session.date);
+                    startDate.setHours(session.startTime.getHours(), session.startTime.getMinutes());
+
+                    const endDate = new Date(session.date);
+                    endDate.setHours(session.endTime.getHours(), session.endTime.getMinutes());
+
+                    const eventData = {
+                        id: sessionToEdit?.id || String(Date.now()),
+                        title: session.title,
+                        start: startDate,
+                        end: endDate,
+                        extendedProps: {
+                            description: session.description,
+                            city: session.city,
+                            status: session.status,
+                            category: session.category,
+                            image: session.image
+                        }
+                    };
+
+                    const currentEvents = [...(this.calendarOptions.events as any[])];
+
+                    if (sessionToEdit) {
+                        // Actualizar evento existente
+                        const index = currentEvents.findIndex(e => e.id === sessionToEdit.id);
+                        if (index !== -1) {
+                            currentEvents[index] = eventData;
+                        }
+                    } else {
+                        // Añadir nuevo evento
+                        currentEvents.push(eventData);
+                    }
+
                     this.calendarOptions = {
                         ...this.calendarOptions,
                         events: currentEvents
                     };
                     this.cdr.detectChanges();
-                    return;
                 }
-
-                // Combinar fecha y horas en objetos Date adecuados para FullCalendar
-                const startDate = new Date(session.date);
-                startDate.setHours(session.startTime.getHours(), session.startTime.getMinutes());
-
-                const endDate = new Date(session.date);
-                endDate.setHours(session.endTime.getHours(), session.endTime.getMinutes());
-
-                const eventData = {
-                    id: sessionToEdit?.id || String(Date.now()),
-                    title: session.title,
-                    start: startDate,
-                    end: endDate,
-                    extendedProps: {
-                        description: session.description,
-                        city: session.city,
-                        status: session.status,
-                        category: session.category,
-                        image: session.image
-                    }
-                };
-
-                const currentEvents = [...(this.calendarOptions.events as any[])];
-
-                if (sessionToEdit) {
-                    // Actualizar evento existente
-                    const index = currentEvents.findIndex(e => e.id === sessionToEdit.id);
-                    if (index !== -1) {
-                        currentEvents[index] = eventData;
-                    }
-                } else {
-                    // Añadir nuevo evento
-                    currentEvents.push(eventData);
-                }
-
-                this.calendarOptions = {
-                    ...this.calendarOptions,
-                    events: currentEvents
-                };
-                this.cdr.detectChanges();
-            }
+            });
         });
     }
 }
